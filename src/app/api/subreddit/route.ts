@@ -41,7 +41,7 @@ export async function POST(req: Request){
             },
         })
         
-        return new Response(`Subreddit ${subreddit.name} created successfully.` ,{ status:201})
+        return new Response(subreddit.name  ,{ status:201})
     } catch(error){
         if (error instanceof z.ZodError) {
             return new Response(error.message, { status: 422 })
