@@ -1,6 +1,6 @@
 'use client'
 
-import { formatTimeToNow } from '@/lib/utils'
+import {formatTimeToNow  } from '@/lib/utils'
 import { User, Vote } from '@prisma/client'
 import { Post } from '@prisma/client'
 import { MessageSquare } from 'lucide-react'
