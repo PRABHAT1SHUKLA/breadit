@@ -23,23 +23,38 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
   })
   const { data: session } = useSession()
 
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    ['infinite-query'],
-    async ({ pageParam = 1 }) => {
-      const query =
-        `/api/posts?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}` +
-        (!!subredditName ? `&subredditName=${subredditName}` : '')
-
-      const { data } = await axios.get(query)
-      return data as ExtendedPost[]
-    },
-
-    {
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['infinite-query',subredditName], 
+    queryFn: async ({ pageParam = 1 }) => {
+        const query =
+          `/api/posts?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}` +
+          (subredditName ? `&subredditName=${subredditName}` : '');
+    
+        try {
+          const { data } = await axios.get(query);
+          return data as ExtendedPost[]; // Assuming ExtendedPost[] is your expected response type
+        } catch (err) {
+          throw new Error('Error fetching posts');
+        }
       },
-      initialData: { pages: [initialPosts], pageParams: [1] },
-    }
+      getNextPageParam: (lastPage, pages) => {
+        // Assuming `lastPage` includes a property like `hasMore` to determine if more pages exist
+        if (lastPage?.length < INFINITE_SCROLL_PAGINATION_RESULTS) {
+          return undefined;  // No more pages
+        }
+        return pages.length + 1;  // Load next page
+      },
+      initialData: {
+        pages: [initialPosts], 
+        pageParams: [1],
+      },
+      staleTime: 60000,  // Adjust as needed to control cache freshness
+      
+      refetchOnMount: false,  // Avoid unnecessary refetches when remounting
+     
+  }
+     
+    
   )
 
   useEffect(() => {
@@ -52,7 +67,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
 
   return (
     <ul className='flex flex-col col-span-2 space-y-6'>
-      {posts.map((post :any, index:any) => {
+      {posts.map((post, index) => {
         const votesAmt = post.votes.reduce((acc, vote) => {
           if (vote.type === 'UP') return acc + 1
           if (vote.type === 'DOWN') return acc - 1
