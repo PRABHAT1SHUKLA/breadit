@@ -23,39 +23,23 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
   })
   const { data: session } = useSession()
 
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['infinite-query',subredditName], 
-    queryFn: async ({ pageParam = 1 }) => {
-        const query =
-          `/api/posts?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}` +
-          (subredditName ? `&subredditName=${subredditName}` : '');
-    
-        try {
-          const { data } = await axios.get(query);
-          return data as ExtendedPost[]; // Assuming ExtendedPost[] is your expected response type
-        } catch (err) {
-          throw new Error('Error fetching posts');
-        }
-      },
-      getNextPageParam: (_, pages) => {
-        // Assuming `lastPage` includes a property like `hasMore` to determine if more pages exist
-       
-        return pages.length + 1;  // Load next page
-      },
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    ['infinite-query'],
+    async ({ pageParam = 1 }) => {
+      const query =
+        `/api/posts?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}` +
+        (!!subredditName ? `&subredditName=${subredditName}` : '')
 
-      initialPageParam: 1,
-      
-      initialData: {
-        pages: [initialPosts], 
-        pageParams: [1],
+      const { data } = await axios.get(query)
+      return data as ExtendedPost[]
+    },
+
+    {
+      getNextPageParam: (_, pages) => {
+        return pages.length + 1
       },
-      staleTime: 60000,  // Adjust as needed to control cache freshness
-      
-      refetchOnMount: false,  // Avoid unnecessary refetches when remounting
-     
-  }
-     
-    
+      initialData: { pages: [initialPosts], pageParams: [1] },
+    }
   )
 
   useEffect(() => {
