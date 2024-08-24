@@ -37,11 +37,9 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
           throw new Error('Error fetching posts');
         }
       },
-      getNextPageParam: (lastPage, pages) => {
+      getNextPageParam: (_, pages) => {
         // Assuming `lastPage` includes a property like `hasMore` to determine if more pages exist
-        if (lastPage?.length < INFINITE_SCROLL_PAGINATION_RESULTS) {
-          return undefined;  // No more pages
-        }
+       
         return pages.length + 1;  // Load next page
       },
       initialData: {
