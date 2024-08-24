@@ -42,6 +42,9 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
        
         return pages.length + 1;  // Load next page
       },
+
+      initialPageParam: 1,
+      
       initialData: {
         pages: [initialPosts], 
         pageParams: [1],
