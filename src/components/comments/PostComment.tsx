@@ -1,17 +1,21 @@
-import { useOnClickOutside } from "@/hooks/use-on-click-outside";
-import { Comment, CommentVote, User } from "@prisma/client";
+'use client'
+
+import { useOnClickOutside } from '@/hooks/use-on-click-outside'
+import { formatTimeToNow } from '@/lib/utils'
 import { CommentRequest } from '@/lib/validators/comment'
-import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { FC, useRef, useState } from "react";
-import { text } from "stream/consumers";
-import axios from "axios";
-import { UserAvatar } from "../UserAvatar";
-import { formatTimeToNow } from "@/lib/utils";
-import CommentVotes from "../CommentVotes";
-import { Button } from "../ui/Button";
-import { MessageSquare } from "lucide-react";
+import { Comment, CommentVote, User } from '@prisma/client'
+import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
+import { MessageSquare } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { FC, useRef, useState } from 'react'
+import CommentVotes from '../CommentVotes'
+import { UserAvatar } from '../UserAvatar'
+import { Button } from '../ui/Button'
+import { Label } from '../ui/Label'
+import { Textarea } from '../ui/Textarea'
+import { toast } from '../../hooks/use-toast'
+import { useSession } from 'next-auth/react'
 
 
 type ExtendedComment = Comment & {
@@ -42,7 +46,7 @@ const PostComment: FC<PostCommentProps> = ({ comment, votesAmt, currentVote, pos
         setIsReplying(false)
     })
 
-    const { mutate: PostComment, isLoading } =
+    const { mutate: postComment, isLoading } =
         useMutation({
             mutationFn: async ({ postId, text, replyToId }: CommentRequest) => {
 
@@ -104,15 +108,62 @@ const PostComment: FC<PostCommentProps> = ({ comment, votesAmt, currentVote, pos
                 onClick={() => {
                     if (!session) return router.push('/sign-in')
                     setIsReplying(true)
-                    variant = 'ghost'
-                    size = 'xs'
-                }}>
+                   
+                }}
+                
+                variant = 'ghost'
+                size = 'xs'>
 
                 <MessageSquare className='h-4 w-4 mr-1.5' />
                 Reply
             </Button>
         </div>
-            
+          {isReplying ? (
+            <div className="grid w-full gap-1.5">
+          <Label htmlFor='comment'>Your comment</Label>
+
+          <div className='mt-2'>
+            <Textarea
+              onFocus={(e) =>
+                e.currentTarget.setSelectionRange(
+                  e.currentTarget.value.length,
+                  e.currentTarget.value.length
+                )
+              }
+              autoFocus
+              id='comment'
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              rows={1}
+              placeholder='What are your thoughts?'
+            />
+
+            <div className='mt-2 flex justify-end gap-2'>
+              <Button
+                tabIndex={-1}
+                variant='subtle'
+                onClick={() => setIsReplying(false)}>
+                Cancel
+              </Button>
+              <Button
+                isLoading={isLoading}
+                onClick={() => {
+                  if (!input) return
+                  postComment({
+                    postId,
+                    text: input,
+                    replyToId: comment.replyToId ?? comment.id, // default to top-level comment
+                  })
+                }}>
+                Post
+              </Button>
+            </div>
+          </div>
+
+
+            </div>
+
+          ):null}
 
     </div>)
 }
