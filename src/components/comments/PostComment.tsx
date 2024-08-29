@@ -167,3 +167,5 @@ const PostComment: FC<PostCommentProps> = ({ comment, votesAmt, currentVote, pos
 
     </div>)
 }
+
+export default PostComment
