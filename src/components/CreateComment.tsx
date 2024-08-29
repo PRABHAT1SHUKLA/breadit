@@ -1,11 +1,12 @@
 "use client"
 
 import { useCustomToasts } from "@/hooks/use-custom-toast"
+import { toast } from '@/hooks/use-toast'
 import { CommentRequest } from "@/lib/validators/comment"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
-import { useRouter } from "next/router"
+import { useRouter } from 'next/navigation'
 import { FC, useState } from "react"
 import { Label } from "./ui/Label"
 import { Textarea } from "./ui/Textarea"
