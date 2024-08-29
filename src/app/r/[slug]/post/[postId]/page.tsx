@@ -70,11 +70,7 @@ const SubRedditPostPage = async ({ params }:
                     </h1>
 
                     <EditorOutput content={post?.content ?? cachedPost.content} />
-                </div>
-
-
-
-                <Suspense
+                    <Suspense
                     fallback={
                         <Loader2 className='h-5 w-5 animate-spin text-zinc-500' />
                     }>
@@ -82,7 +78,10 @@ const SubRedditPostPage = async ({ params }:
                     <CommentsSection postId={post?.id ?? cachedPost.id} />
 
                 </Suspense>
+                </div>
 
+
+            
 
 
             </div>
