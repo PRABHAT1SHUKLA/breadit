@@ -1,14 +1,22 @@
 'use client'
 
-import { useOnClickOutside } from "@/hooks/use-on-click-outside"
-import { Prisma, Subreddit } from "@prisma/client"
-import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
-import debounce from "lodash.debounce"
-import { usePathname } from "next/navigation"
-import { useRouter } from "next/router"
-import { FC, useCallback, useEffect, useRef, useState } from "react"
-import { Command, CommandInput } from "./ui/command"
+import { Prisma, Subreddit } from '@prisma/client'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import debounce from 'lodash.debounce'
+import { usePathname, useRouter } from 'next/navigation'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/Command'
+import { useOnClickOutside } from '@/hooks/use-on-click-outside'
+import { Users } from 'lucide-react'
 
 interface SearchBarProps{}
 
