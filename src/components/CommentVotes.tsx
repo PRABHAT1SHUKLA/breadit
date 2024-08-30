@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/Button'
 import { toast } from '@/hooks/use-toast'
-import { useCustomToasts } from '@/hooks/use-custom-toasts'
+import { useCustomToasts } from '@/hooks/use-custom-toast'
 import { cn } from '@/lib/utils'
 import { CommentVoteRequest } from '@/lib/validators/vote'
 import { usePrevious } from '@mantine/hooks'
