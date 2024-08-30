@@ -14,7 +14,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@/components/ui/Command'
 import { useOnClickOutside } from '@/hooks/use-on-click-outside'
 import { Users } from 'lucide-react'
 
