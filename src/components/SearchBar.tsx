@@ -67,7 +67,27 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
            value={input}
            className="outline-none border-none focus:border-none focus:outline-none ring-0"
            placeholder="Search Communities ..."/>
-
+           {input.length > 0 && (
+        <CommandList className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'>
+          {isFetched && <CommandEmpty>No results found.</CommandEmpty>}
+          {(queryResults?.length ?? 0) > 0 ? (
+            <CommandGroup heading='Communities'>
+              {queryResults?.map((subreddit) => (
+                <CommandItem
+                  onSelect={(e) => {
+                    router.push(`/r/${e}`)
+                    router.refresh()
+                  }}
+                  key={subreddit.id}
+                  value={subreddit.name}>
+                  <Users className='mr-2 h-4 w-4' />
+                  <a href={`/r/${subreddit.name}`}>r/{subreddit.name}</a>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ) : null}
+        </CommandList>
+      )}
     </Command>
   )
 }
