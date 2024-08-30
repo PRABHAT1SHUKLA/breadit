@@ -91,3 +91,6 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
     </Command>
   )
 }
+
+
+export default SearchBar
