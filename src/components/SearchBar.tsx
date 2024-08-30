@@ -18,66 +18,73 @@ import {
 import { useOnClickOutside } from '@/hooks/use-on-click-outside'
 import { Users } from 'lucide-react'
 
-interface SearchBarProps{}
+interface SearchBarProps {}
 
 const SearchBar: FC<SearchBarProps> = ({}) => {
-    const [input , setInput] = useState<string>('')
+  const [input, setInput] = useState<string>('')
+  const pathname = usePathname()
+  const commandRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
-    const pathname = usePathname()
+  useOnClickOutside(commandRef, () => {
+    setInput('')
+  })
 
-    const commandRef = useRef<HTMLDivElement>(null)
-    const router = useRouter()
+  const request = debounce(async () => {
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  }, 300);
 
-    useOnClickOutside(commandRef , ()=>{
-        setInput('')
-    })
+  const debounceRequest = useCallback(() => {
+    request()
 
-    const request = debounce(async() =>{
-        refetch()
-    },300)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-    const debounceRequest = useCallback(()=>{
-        request()
-    },[])
-
-   const {
+  const {
     isFetching,
     data: queryResults,
     refetch,
     isFetched,
-   } = useQuery({
-    queryFn: async() =>{
-        if (!input) return []
-        const {data} = await axios.get(`/api/search?q=${input}`)
-
-        return data as (Subreddit & {
-            _count: Prisma.SubredditCountOutputType
-        })[]
+  } = useQuery({
+    queryFn: async () => {
+      if (!input) return []
+      const { data } = await axios.get(`/api/search?q=${input}`)
+      return data as (Subreddit & {
+        _count: Prisma.SubredditCountOutputType
+      })[]
     },
     queryKey: ['search-query'],
     enabled: false,
-   })
+  })
 
-   useEffect(() => {
+  useEffect(() => {
     setInput('')
   }, [pathname])
 
-
   return (
-    <Command ref={commandRef}
-    className="relative rounded-lg border max-w-lg z-50 overflow-visible">
-        <CommandInput
-           isLoading={isFetching}
-           onValueChange={(text) => {
-            setInput(text)
+    <Command
+      ref={commandRef}
+      className='relative rounded-lg border max-w-lg z-50 overflow-visible'>
+      <CommandInput
+        onValueChange={(text) => {
+          setInput(text)
+          if (text.length>0){
             debounceRequest()
-           }}
-           value={input}
-           className="outline-none border-none focus:border-none focus:outline-none ring-0"
-           placeholder="Search Communities ..."/>
-           {input.length > 0 && (
+          }
+          
+        }}
+        value={input}
+        className='outline-none border-none focus:border-none focus:outline-none ring-0'
+        placeholder='Search communities...'
+      />
+
+      {input.length > 0 && (
         <CommandList className='absolute bg-white top-full inset-x-0 shadow rounded-b-md'>
-          {isFetched && <CommandEmpty>No results found.</CommandEmpty>}
+          {isFetched && queryResults?.length === 0 && <CommandEmpty>No results found.</CommandEmpty>}
           {(queryResults?.length ?? 0) > 0 ? (
             <CommandGroup heading='Communities'>
               {queryResults?.map((subreddit) => (
@@ -99,6 +106,5 @@ const SearchBar: FC<SearchBarProps> = ({}) => {
     </Command>
   )
 }
-
 
 export default SearchBar

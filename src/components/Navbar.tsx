@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Icons } from "./icons"
 import { buttonVariants } from './ui/Button'
-import { authOptions, getAuthSession } from "@/lib/auth"
+import { authOptions } from "@/lib/auth"
 import UserAccountNav from "./UserAccountNav"
 import { getServerSession } from "next-auth"
 import SearchBar from "./SearchBar"
@@ -22,7 +22,7 @@ const Navbar = async () => {
                 {/* Searchbar */}
                 <SearchBar/>
 
-                {session ? (<UserAccountNav
+                {session?.user  ? (<UserAccountNav
                     user={session.user} />) : (<Link href='/sign-in' className={buttonVariants()}>
                         Sign In
                     </Link>)}
