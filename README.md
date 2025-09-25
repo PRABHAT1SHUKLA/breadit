@@ -65,8 +65,8 @@ To run **Breadit** locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/Prathamm-sahu/Breadit.git
-   cd Breadit
+   git clone git@github.com:PRABHAT1SHUKLA/breadit.git
+   cd breadit
    ```
 
 2. **Install dependencies:**
